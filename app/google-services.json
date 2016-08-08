@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "1079877783727",
+    "project_id": "chat-app-with-gcm"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079877783727:android:22058bd8001eeb8d",
+        "android_client_info": {
+          "package_name": "net.idey.gcmchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOMgKIUghGBk0sR3ZBmv6vMQos7t3vZ4E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

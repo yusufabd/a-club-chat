@@ -1,15 +1,16 @@
 package net.idey.gcmchat.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.idey.gcmchat.R;
+import net.idey.gcmchat.activities.ChatRoomActivity;
+import net.idey.gcmchat.helpers.Tags;
 import net.idey.gcmchat.models.ChatRoom;
 
 import java.text.ParseException;
@@ -21,7 +22,7 @@ import java.util.Date;
 /**
  * Created by yusuf.abdullaev on 7/31/2016.
  */
-public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>{
+public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder> implements Tags{
 
     private Context mContext;
     private ArrayList<ChatRoom> chatRooms;
@@ -39,8 +40,9 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
     }
 
     public ChatRoomsAdapter(Context context, ArrayList<ChatRoom> chatRooms) {
-        this.mContext = context;
+        mContext = context;
         this.chatRooms = chatRooms;
+
 
         Calendar calendar = Calendar.getInstance();
         today = String.valueOf(Calendar.DAY_OF_MONTH);
@@ -54,17 +56,27 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ChatRoom chatRoom = chatRooms.get(position);
+        final ChatRoom chatRoom = chatRooms.get(position);
         holder.name.setText(chatRoom.getName());
         holder.message.setText(chatRoom.getLastMessage());
         if (chatRoom.getUnreadCount() > 0){
-            holder.count.setText(chatRoom.getUnreadCount());
             holder.count.setVisibility(View.VISIBLE);
+            holder.count.setText(chatRoom.getUnreadCount());
         }else {
             holder.count.setVisibility(View.GONE);
         }
 
         holder.time.setText(getTimestamp(chatRoom.getTimestamp()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ChatRoomActivity.class);
+                intent.putExtra(CHAT_ROOM_ID, chatRoom.getId());
+                intent.putExtra(NAME, chatRoom.getName());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -90,52 +102,4 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
         return timestamp;
     }
 
-    public interface ClickListener{
-        void onClick(View view, int position);
-
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener{
-
-        private GestureDetector detector;
-        private ChatRoomsAdapter.ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener){
-            this.clickListener = clickListener;
-            detector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null){
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null){
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
-    }
 }

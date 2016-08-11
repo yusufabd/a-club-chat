@@ -86,23 +86,6 @@ public class MainActivity extends AppCompatActivity implements Tags{
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-        recyclerView.addOnItemTouchListener(new ChatRoomsAdapter.RecyclerTouchListener(getApplicationContext(),
-                recyclerView,
-                new ChatRoomsAdapter.ClickListener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        ChatRoom chatRoom = chatRoomArrayList.get(position);
-                        Intent intent = new Intent(getApplicationContext(), ChatRoomActivity.class);
-                        intent.putExtra(CHAT_ROOM_ID, chatRoom.getId());
-                        intent.putExtra(NAME, chatRoom.getName());
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onLongClick(View view, int position) {
-                        //TODO action for long click on chat room
-                    }
-                }));
         if (checkPlayServices()){
             registerGcm();
             fetchChatRooms();

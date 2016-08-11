@@ -24,6 +24,7 @@ public class AppPreferencesManager {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_USER_EMAIL = "user_email";
+    private static final String KEY_USER_GCM_ID = "gcm_registration_id";
     private static final String KEY_NOTIFICATIONS = "notifications";
 
     public AppPreferencesManager(Context context) {
@@ -45,7 +46,8 @@ public class AppPreferencesManager {
         if (pref.getString(KEY_USER_ID, null) != null){
             return new User(pref.getString(KEY_USER_ID, null),
                             pref.getString(KEY_USER_NAME, null),
-                            pref.getString(KEY_USER_EMAIL, null));
+                            pref.getString(KEY_USER_EMAIL, null),
+                            pref.getString(KEY_USER_GCM_ID, null));
         }
         return null;
     }

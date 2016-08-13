@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.idey.gcmchat.R;
@@ -27,6 +28,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
     private Context mContext;
     private ArrayList<ChatRoom> chatRooms;
     private static String today;
+    private LinearLayout.LayoutParams layoutParams;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name, message, time, count;
@@ -44,24 +46,25 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
         this.chatRooms = chatRooms;
 
 
-        Calendar calendar = Calendar.getInstance();
         today = String.valueOf(Calendar.DAY_OF_MONTH);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_room_list_row, parent, false);
+        layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.itemView.setLayoutParams(layoutParams);
         final ChatRoom chatRoom = chatRooms.get(position);
         holder.name.setText(chatRoom.getName());
         holder.message.setText(chatRoom.getLastMessage());
         if (chatRoom.getUnreadCount() > 0){
             holder.count.setVisibility(View.VISIBLE);
-            holder.count.setText(chatRoom.getUnreadCount());
+            holder.count.setText(String.valueOf(chatRoom.getUnreadCount()));
         }else {
             holder.count.setVisibility(View.GONE);
         }

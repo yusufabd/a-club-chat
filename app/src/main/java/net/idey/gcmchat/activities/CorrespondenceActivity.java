@@ -46,37 +46,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatRoomActivity extends AppCompatActivity implements Tags{
+public class CorrespondenceActivity extends AppCompatActivity implements Tags {
 
-    private static final String TAG = "logs/chatRoom";
+    private static final String TAG = "logs/correspondence";
 
-
-    private String chatRoomId;
     private Button buttonSend;
     private EditText inputMessage;
     private RecyclerView recyclerView;
     private ChatThreadAdapter mAdapter;
     private ArrayList<Message> messageArrayList;
     private BroadcastReceiver mBroadcastReceiver;
-
+    private User collocutor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_room);
+        setContentView(R.layout.activity_correspondence);
+
+        collocutor = (User)getIntent().getSerializableExtra(USER);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getIntent().getStringExtra(NAME));
+        getSupportActionBar().setTitle(collocutor.getName());
         inputMessage = (EditText)findViewById(R.id.input_message);
         buttonSend = (Button)findViewById(R.id.btn_send);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_messages);
-
-        chatRoomId = getIntent().getStringExtra(CHAT_ROOM_ID);
-        if (chatRoomId == null){
-            Toast.makeText(this, "Chat room not found!", Toast.LENGTH_LONG).show();
-            finish();
-        }
 
         messageArrayList = new ArrayList<>();
         mAdapter = new ChatThreadAdapter(GcmChatApplication.getInstance().getPrefManager().getUser().getId(),
@@ -90,15 +85,14 @@ public class ChatRoomActivity extends AppCompatActivity implements Tags{
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)){
-                    if (intent.getStringExtra(CHAT_ROOM_ID).equals(chatRoomId)) {
-                        handleNotification(intent);
-                    }}
-            }
-        };
-        fetchChatThread();
-    }
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
 
+                    //// TODO: 8/13/2016 handle push notif
+
+                }            }
+        };
+//        fetchChatThread();
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -133,7 +127,7 @@ public class ChatRoomActivity extends AppCompatActivity implements Tags{
             return;
         }
 
-        String endPoint = EndPoints.CHAT_ROOM_MESSAGE.replace("_ID_", chatRoomId);
+        String endPoint = EndPoints.USER_MESSAGE.replace("_ID_", collocutor.getId());
         Log.w(TAG, "End Point: " + endPoint);
         inputMessage.setText("");
 
@@ -145,23 +139,23 @@ public class ChatRoomActivity extends AppCompatActivity implements Tags{
                     JSONObject object = new JSONObject(response);
 
                     if (!object.getBoolean(ERROR)){
-                    JSONObject commentObj = object.getJSONObject(MESSAGE);
+                        JSONObject commentObj = object.getJSONObject(MESSAGE);
 
-                    JSONObject userObj = object.getJSONObject(USER);
+                        JSONObject userObj = object.getJSONObject(USER);
 
-                    Message message = new Message();
-                    message.setId(commentObj.getString(MESSAGE_ID));
-                    message.setMessage(commentObj.getString(MESSAGE));
-                    message.setCreatedAt(commentObj.getString(CREATED_AT));
-                    message.setUser(new User(userObj.getString(USER_ID),
-                                             userObj.getString(NAME),
-                                             userObj.getString(EMAIL),
-                                             null));
+                        Message message = new Message();
+                        message.setId(commentObj.getString(MESSAGE_ID));
+                        message.setMessage(commentObj.getString(MESSAGE));
+                        message.setCreatedAt(commentObj.getString(CREATED_AT));
+                        message.setUser(new User(userObj.getString(USER_ID),
+                                userObj.getString(NAME),
+                                userObj.getString(EMAIL),
+                                null));
 
-                    messageArrayList.add(message);
-                    mAdapter.notifyDataSetChanged();
-                    if (mAdapter.getItemCount() > 1){
-                        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+                        messageArrayList.add(message);
+                        mAdapter.notifyDataSetChanged();
+                        if (mAdapter.getItemCount() > 1){
+                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
                         }
                     }else {
                         Toast.makeText(getApplicationContext(), "" + object.getString(MESSAGE), Toast.LENGTH_LONG).show();
@@ -200,7 +194,8 @@ public class ChatRoomActivity extends AppCompatActivity implements Tags{
     }
 
     private void fetchChatThread(){
-        String endPoint = EndPoints.CHAT_ROOM_THREAD.replace("_ID_", chatRoomId);
+//        String endPoint = EndPoints.CORRESPONDENCE_THREAD.replace("_ID_", chatRoomId);
+        String endPoint = "";
         Log.w(TAG, "End Point: " + endPoint);
 
         StringRequest request = new StringRequest(Request.Method.GET,
@@ -214,31 +209,31 @@ public class ChatRoomActivity extends AppCompatActivity implements Tags{
 
                     if (!object.getBoolean(ERROR)){
 
-                    JSONArray threadArray = object.getJSONArray("messages");
-                    for (int i = 0; i < threadArray.length(); i++) {
-                        JSONObject arrayItem = threadArray.getJSONObject(i);
-                        String mess_id = arrayItem.getString(MESSAGE_ID);
-                        String mess = arrayItem.getString(MESSAGE);
-                        String mess_time = arrayItem.getString(CREATED_AT);
+                        JSONArray threadArray = object.getJSONArray("messages");
+                        for (int i = 0; i < threadArray.length(); i++) {
+                            JSONObject arrayItem = threadArray.getJSONObject(i);
+                            String mess_id = arrayItem.getString(MESSAGE_ID);
+                            String mess = arrayItem.getString(MESSAGE);
+                            String mess_time = arrayItem.getString(CREATED_AT);
 
-                        JSONObject userObj = arrayItem.getJSONObject(USER);
-                        String user_id = userObj.getString(USER_ID);
-                        String username = userObj.getString("username");
-                        User user = new User(user_id, username, null, null);
+                            JSONObject userObj = arrayItem.getJSONObject(USER);
+                            String user_id = userObj.getString(USER_ID);
+                            String username = userObj.getString("username");
+                            User user = new User(user_id, username, null, null);
 
-                        Message message = new Message();
-                        message.setId(mess_id);
-                        message.setMessage(mess);
-                        message.setCreatedAt(mess_time);
-                        message.setUser(user);
+                            Message message = new Message();
+                            message.setId(mess_id);
+                            message.setMessage(mess);
+                            message.setCreatedAt(mess_time);
+                            message.setUser(user);
 
-                        messageArrayList.add(message);
-                    }
-                    mAdapter.notifyDataSetChanged();
+                            messageArrayList.add(message);
+                        }
+                        mAdapter.notifyDataSetChanged();
                         recyclerView.setAdapter(mAdapter);
-                    if (mAdapter.getItemCount() > 1){
-                        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
-                    }
+                        if (mAdapter.getItemCount() > 1){
+                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
+                        }
 
                     }else{
                         Toast.makeText(getApplicationContext(), "" + object.getJSONObject(ERROR).getString(MESSAGE),

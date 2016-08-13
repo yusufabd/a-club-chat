@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements Tags{
                 }
 
                 mAdapter.notifyDataSetChanged();
-                subscribeToALlTopics();
+                subscribeToAllTopics();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -194,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements Tags{
         startService(intent);
     }
 
-    private void subscribeToALlTopics(){
+    private void subscribeToAllTopics(){
         for(ChatRoom chatRoom : chatRoomArrayList){
             Intent intent = new Intent(this, GcmIntentService.class);
             intent.putExtra(GcmIntentService.KEY, GcmIntentService.SUBSCRIBE);
@@ -235,8 +234,7 @@ public class MainActivity extends AppCompatActivity implements Tags{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(MainActivity.this, NewChatActivity.class));
             }
         });
     }

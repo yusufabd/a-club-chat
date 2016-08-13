@@ -12,10 +12,18 @@
     tools:context="net.idey.gcmchat.activities.NewChatActivity"
     tools:showIn="@layout/activity_new_chat">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_add_chat_room"
+        android:text="@string/add_cr"
+        android:onClick="openNewChatRoomActivity"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recycler_contacts"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:layout_below="@id/button_add_chat_room"/>
 
 </RelativeLayout>

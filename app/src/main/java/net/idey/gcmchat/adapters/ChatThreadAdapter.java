@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.idey.gcmchat.R;
@@ -19,13 +20,14 @@ import java.util.Date;
 /**
  * Created by yusuf.abdullaev on 8/2/2016.
  */
-public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class ChatThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private String userId;
     private int SELF = 100;
     private static String today;
 
     private Context mContext;
     private ArrayList<Message> messageArrayList;
+    private LinearLayout.LayoutParams layoutParams;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView message, timestamp;
@@ -37,7 +39,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    public ChatRoomThreadAdapter(String userId, Context mContext, ArrayList<Message> messageArrayList) {
+    public ChatThreadAdapter(String userId, Context mContext, ArrayList<Message> messageArrayList) {
         this.userId = userId;
         this.mContext = mContext;
         this.messageArrayList = messageArrayList;
@@ -49,7 +51,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-
+        layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         if (viewType == SELF){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_self, parent, false);
         }else {
@@ -70,6 +72,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        holder.itemView.setLayoutParams(layoutParams);
         Message message = messageArrayList.get(position);
         ((ViewHolder)holder).message.setText(message.getMessage());
 

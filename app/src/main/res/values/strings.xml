@@ -14,4 +14,9 @@
     <string name="send">SEND</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_new_chat">NewChatActivity</string>
+    <string name="title_activity_correspondence">CorrespondenceActivity</string>
+    <string name="add_cr">New Chat Room</string>
+    <string name="title_activity_new_chat_room">NewChatRoomActivity</string>
+    <string name="hint_cr_name">Enter Chat Room title</string>
+    <string name="confirm">Confirm</string>
 </resources>
